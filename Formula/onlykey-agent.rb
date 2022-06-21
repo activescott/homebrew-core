@@ -204,15 +204,9 @@ class OnlykeyAgent < Formula
   end
 
   test do
-    result = `#{bin}/onlykey-agent test@example.com`
-    assert_block("onlykey-agent didn't return an expected result") do
-      if result.match? %r{<ssh://test@example.com|ed25519>$}
-        # then the key was plugged in and unlocked
-        return true
-      elsif result.include? "try unplugging and replugging your device"
-        # then the key wasn't found
-        return true
-      end
-    end
+    # first regex is when key was plugged in and unlocked, and second is when key isn't plugged in
+    # (<ssh://test@example.com|ed25519>$)|("try unplugging and replugging your device")
+    output = `#{bin}/onlykey-agent test@example.com 2>&1`
+    assert_match %r{(<ssh://test@example.com\|ed25519>$)|(try unplugging and replugging your device)}, output
   end
 end

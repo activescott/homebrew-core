@@ -12,7 +12,7 @@ class OnlykeyAgent < Formula
   depends_on "libusb"
 
   # openssl according to https://cryptography.io/en/latest/installation/#supported-platforms:
-  depends_on "openssl@1.1"
+  depends_on "openssl@3.0"
 
   depends_on "python@3.9"
 

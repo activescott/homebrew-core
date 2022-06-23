@@ -8,16 +8,19 @@ class OnlykeyAgent < Formula
   license "LGPL-3.0-only"
 
   # libusb and gnupg according to https://docs.crp.to/onlykey-agent.html#installation
-  depends_on "gnupg@2.2"
+  depends_on "gnupg"
   depends_on "libusb"
 
   # openssl according to https://cryptography.io/en/latest/installation/#supported-platforms:
-  depends_on "openssl@3.0"
+  depends_on "openssl@1.1"
 
-  depends_on "python@3.9"
+  depends_on "python@3.10"
 
-  # rust accordin to https://cryptography.io/en/latest/installation/#rust
-  depends_on "rust"
+  # rust according to https://cryptography.io/en/latest/installation/#rust
+  depends_on "rust" => :build
+
+  # six comes from brew create --python adding it as a resource
+  depends_on "six"
 
   resource "aenum" do
     url "https://files.pythonhosted.org/packages/63/6c/a71e18de7c651f384b328be6bccadbbd472aca62f547c1a307b9388d03ca/aenum-3.1.11.tar.gz"
@@ -174,11 +177,6 @@ class OnlykeyAgent < Formula
     sha256 "fa0fe2722ee1c3f57eac478820c3a5ae2f624af8264cbdf9000c980ff7f75e3f"
   end
 
-  resource "six" do
-    url "https://files.pythonhosted.org/packages/71/39/171f1c67cd00715f190ba0b100d606d440a28c93c7714febeca8b79af85e/six-1.16.0.tar.gz"
-    sha256 "1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926"
-  end
-
   resource "Unidecode" do
     url "https://files.pythonhosted.org/packages/41/16/ee78864c2c2ba9bddba3978baa378f83270c8b7810eb7900f84e62a9ffac/Unidecode-1.3.4.tar.gz"
     sha256 "8e4352fb93d5a735c788110d2e7ac8e8031eb06ccbfe8d324ab71735015f9342"
@@ -204,9 +202,9 @@ class OnlykeyAgent < Formula
   end
 
   test do
-    # first regex is when key was plugged in and unlocked, and second is when key isn't plugged in
-    # (<ssh://test@example.com|ed25519>$)|("try unplugging and replugging your device")
-    output = `#{bin}/onlykey-agent test@example.com 2>&1`
-    assert_match %r{(<ssh://test@example.com\|ed25519>$)|(try unplugging and replugging your device)}, output
+    # note: the device mut not be plugged in to get the expected message
+    # since CI is the foremost user of `brew test` we assume that there is no device
+    output = shell_output("#{bin}/onlykey-agent test@example.com 2>&1", 1)
+    assert_match %r{try unplugging and replugging your device}, output
   end
 end

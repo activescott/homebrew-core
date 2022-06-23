@@ -7,6 +7,9 @@ class OnlykeyAgent < Formula
   sha256 "096f20580ae112f57c1b9b279ed17728dc8e6f0fca301be586b9d976177f1523"
   license "LGPL-3.0-only"
 
+  # rust according to https://cryptography.io/en/latest/installation/#rust
+  depends_on "rust" => :build
+
   # libusb and gnupg according to https://docs.crp.to/onlykey-agent.html#installation
   depends_on "gnupg"
   depends_on "libusb"
@@ -15,9 +18,6 @@ class OnlykeyAgent < Formula
   depends_on "openssl@1.1"
 
   depends_on "python@3.10"
-
-  # rust according to https://cryptography.io/en/latest/installation/#rust
-  depends_on "rust" => :build
 
   # six comes from brew create --python adding it as a resource
   depends_on "six"
@@ -202,9 +202,9 @@ class OnlykeyAgent < Formula
   end
 
   test do
-    # note: the device mut not be plugged in to get the expected message
+    # the device mut not be plugged in to get the expected message
     # since CI is the foremost user of `brew test` we assume that there is no device
     output = shell_output("#{bin}/onlykey-agent test@example.com 2>&1", 1)
-    assert_match %r{try unplugging and replugging your device}, output
+    assert_match(/try unplugging and replugging your device/, output)
   end
 end

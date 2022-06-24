@@ -6,23 +6,21 @@ class OnlykeyAgent < Formula
   url "https://files.pythonhosted.org/packages/02/c1/27c6cfbc5ee63fca91e37915d0182c0bfb988ca12362f01bcd5451e0ee10/onlykey-agent-1.1.14.tar.gz"
   sha256 "096f20580ae112f57c1b9b279ed17728dc8e6f0fca301be586b9d976177f1523"
   license "LGPL-3.0-only"
-  
+
   # rust according to https://cryptography.io/en/latest/installation/#rust
   depends_on "rust" => :build
 
   # libusb and gnupg according to https://docs.crp.to/onlykey-agent.html#installation
   depends_on "gnupg"
+
+  # hidapi & six come from brew create --python adding it as a resource
+  depends_on "hidapi"
   depends_on "libusb"
 
   # openssl according to https://cryptography.io/en/latest/installation/#supported-platforms:
   depends_on "openssl@1.1"
-
   depends_on "python@3.10"
-
-  # six comes from brew create --python adding it as a resource
   depends_on "six"
-  # hidapi comes from brew create --python adding it as a resource
-  depends_on "hidapi"
 
   resource "aenum" do
     url "https://files.pythonhosted.org/packages/63/6c/a71e18de7c651f384b328be6bccadbbd472aca62f547c1a307b9388d03ca/aenum-3.1.11.tar.gz"

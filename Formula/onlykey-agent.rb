@@ -6,7 +6,7 @@ class OnlykeyAgent < Formula
   url "https://files.pythonhosted.org/packages/02/c1/27c6cfbc5ee63fca91e37915d0182c0bfb988ca12362f01bcd5451e0ee10/onlykey-agent-1.1.14.tar.gz"
   sha256 "096f20580ae112f57c1b9b279ed17728dc8e6f0fca301be586b9d976177f1523"
   license "LGPL-3.0-only"
-
+  
   # rust according to https://cryptography.io/en/latest/installation/#rust
   depends_on "rust" => :build
 
@@ -21,6 +21,8 @@ class OnlykeyAgent < Formula
 
   # six comes from brew create --python adding it as a resource
   depends_on "six"
+  # hidapi comes from brew create --python adding it as a resource
+  depends_on "hidapi"
 
   resource "aenum" do
     url "https://files.pythonhosted.org/packages/63/6c/a71e18de7c651f384b328be6bccadbbd472aca62f547c1a307b9388d03ca/aenum-3.1.11.tar.gz"
@@ -85,11 +87,6 @@ class OnlykeyAgent < Formula
   resource "fido2" do
     url "https://files.pythonhosted.org/packages/cd/69/1af41955530255ca2337bab370a75b3dbbb8be8707f6280c9efedfb77a85/fido2-1.0.0.tar.gz"
     sha256 "2509a4958b666d747fd5754dfa9357da2d81b52edc0ecff75b68cea939154c02"
-  end
-
-  resource "hidapi" do
-    url "https://files.pythonhosted.org/packages/ef/72/54273f701c737ae5f42d9c0adf641912d20eb955c75433f1093fa509bcc7/hidapi-0.12.0.post2.tar.gz"
-    sha256 "8ebb2117be8b27af5c780936030148e1971b6b7fda06e0581ff0bfb15e94ed76"
   end
 
   resource "idna" do

@@ -13,18 +13,24 @@ class OnlykeyAgent < Formula
   # libusb and gnupg according to https://docs.crp.to/onlykey-agent.html#installation
   depends_on "gnupg"
 
-  # hidapi & six come from brew create --python adding it as a resource
-  depends_on "hidapi"
   depends_on "libusb"
 
   # openssl according to https://cryptography.io/en/latest/installation/#supported-platforms:
   depends_on "openssl@1.1"
+
   depends_on "python@3.10"
+
+  # six come from brew create --python adding it as a resource
   depends_on "six"
 
   resource "aenum" do
     url "https://files.pythonhosted.org/packages/63/6c/a71e18de7c651f384b328be6bccadbbd472aca62f547c1a307b9388d03ca/aenum-3.1.11.tar.gz"
     sha256 "aed2c273547ae72a0d5ee869719c02a643da16bf507c80958faadc7e038e3f73"
+  end
+
+  resource "hidapi" do
+    url "https://files.pythonhosted.org/packages/ef/72/54273f701c737ae5f42d9c0adf641912d20eb955c75433f1093fa509bcc7/hidapi-0.12.0.post2.tar.gz"
+    sha256 "8ebb2117be8b27af5c780936030148e1971b6b7fda06e0581ff0bfb15e94ed76"
   end
 
   resource "backports.shutil_which" do
@@ -193,6 +199,8 @@ class OnlykeyAgent < Formula
   end
 
   def install
+    # prevent "fatal error: libusb.h: No such file or directory" when building hidapi on linux
+    ENV.append "CFLAGS", "-I#{Formula["libusb"].include}/libusb-1.0"
     virtualenv_install_with_resources
   end
 

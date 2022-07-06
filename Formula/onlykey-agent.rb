@@ -195,6 +195,6 @@ class OnlykeyAgent < Formula
     # the device mut not be plugged in to get the expected message
     # since CI is the foremost user of `brew test` we assume that there is no device
     output = shell_output("#{bin}/onlykey-agent test@example.com 2>&1", 1)
-    assert_match(/try unplugging and replugging your device/, output)
+    assert_match("try unplugging and replugging your device", output)
   end
 end

@@ -187,7 +187,7 @@ class OnlykeyAgent < Formula
 
   def install
     # prevent "fatal error: libusb.h: No such file or directory" when building hidapi on linux
-    ENV.append "CFLAGS", "-I#{Formula["libusb"].include}/libusb-1.0"
+    ENV.append_to_cflags "-I#{Formula["libusb"].include}/libusb-1.0"
     virtualenv_install_with_resources
   end
 

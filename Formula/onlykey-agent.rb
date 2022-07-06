@@ -7,20 +7,12 @@ class OnlykeyAgent < Formula
   sha256 "096f20580ae112f57c1b9b279ed17728dc8e6f0fca301be586b9d976177f1523"
   license "LGPL-3.0-only"
 
-  # rust according to https://cryptography.io/en/latest/installation/#rust
-  depends_on "rust" => :build
-
-  # libusb and gnupg according to https://docs.crp.to/onlykey-agent.html#installation
+  # https://docs.crp.to/onlykey-agent.html#installation
+  depends_on "rust" => :build # for cryptography
   depends_on "gnupg"
-
   depends_on "libusb"
-
-  # openssl according to https://cryptography.io/en/latest/installation/#supported-platforms:
-  depends_on "openssl@1.1"
-
+  depends_on "openssl@1.1" # for cryptography
   depends_on "python@3.10"
-
-  # six come from brew create --python adding it as a resource
   depends_on "six"
 
   resource "aenum" do

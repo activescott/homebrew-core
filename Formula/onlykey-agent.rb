@@ -193,11 +193,6 @@ class OnlykeyAgent < Formula
     sha256 "c4d647b99872929fdb7bdcaa4fbe7f01413ed3d98077df798530e5b04f116c83"
   end
 
-  resource "wheel" do
-    url "https://files.pythonhosted.org/packages/c0/6c/9f840c2e55b67b90745af06a540964b73589256cb10cc10057c87ac78fc2/wheel-0.37.1.tar.gz"
-    sha256 "e9a504e793efbca1b8e0e9cb979a249cf4a0a7b5b8c9e8b65a5e39d49529c1c4"
-  end
-
   def install
     # prevent "fatal error: libusb.h: No such file or directory" when building hidapi on linux
     ENV.append "CFLAGS", "-I#{Formula["libusb"].include}/libusb-1.0"

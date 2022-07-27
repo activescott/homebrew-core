@@ -10,6 +10,7 @@ class OnlykeyAgent < Formula
   # https://docs.crp.to/onlykey-agent.html#installation
   depends_on "rust" => :build # for cryptography
   depends_on "gnupg"
+  depends_on "libcython"
   depends_on "libusb"
   depends_on "openssl@1.1" # for cryptography
   depends_on "python@3.10"
@@ -63,11 +64,6 @@ class OnlykeyAgent < Formula
   resource "cryptography" do
     url "https://files.pythonhosted.org/packages/51/05/bb2b681f6a77276fc423d04187c39dafdb65b799c8d87b62ca82659f9ead/cryptography-37.0.2.tar.gz"
     sha256 "f224ad253cc9cea7568f49077007d2263efa57396a2f2f78114066fd54b5c68e"
-  end
-
-  resource "Cython" do
-    url "https://files.pythonhosted.org/packages/d4/ad/7ce0cccd68824ac9623daf4e973c587aa7e2d23418cd028f8860c80651f5/Cython-0.29.30.tar.gz"
-    sha256 "2235b62da8fe6fa8b99422c8e583f2fb95e143867d337b5c75e4b9a1a865f9e3"
   end
 
   resource "docutils" do
@@ -185,7 +181,37 @@ class OnlykeyAgent < Formula
     sha256 "c4d647b99872929fdb7bdcaa4fbe7f01413ed3d98077df798530e5b04f116c83"
   end
 
+  def install_cython_pth
+    # discover Cython distribution without depends_on Cython/libcython and without Cython resource
+    # based on https://github.com/Homebrew/brew/blob/976681134384abf0466bbf3ce4acdb880a262d84/Library/Homebrew/language/python.rb#L136-L151
+    # Find any Python bindings provided by recursive dependencies
+    ohai "install_cython_pth: starting"
+    formula_deps = recursive_dependencies
+    ohai "install_cython_pth: formula_deps is '#{formula_deps}'"
+
+    pth_contents = formula_deps.map do |d|
+      next if d.build? || d.test?
+      # Do not add the main site-package provided by the brewed
+      # Python formula, to keep the virtual-env's site-package pristine
+      next if python_names.include? d.name
+
+      dep_site_packages = Formula[d.name].opt_prefix/Language::Python.site_packages("python3")
+      ohai "install_cython_pth: dep_site_packages for #{d.name} at '#{dep_site_packages}'"
+      next unless dep_site_packages.exist?
+
+      "import site; site.addsitedir('#{dep_site_packages}')\n"
+    end.compact
+    unless pth_contents.empty?
+      venv_root = libexec
+      ohai "install_cython_pth: Writing pth_contents of #{pth_contents.join} to \
+        #{venv_root/Language::Python.site_packages("python3")/"homebrew-onlykey-agent-dependencies.pth"}"
+      (venv_root/Language::Python.site_packages("python3")/"homebrew-onlykey-agent-dependencies.pth")
+        .write pth_contents.join
+    end
+  end
+
   def install
+    install_cython_pth
     # prevent "fatal error: libusb.h: No such file or directory" when building hidapi on linux
     ENV.append_to_cflags "-I#{Formula["libusb"].include}/libusb-1.0"
     virtualenv_install_with_resources
